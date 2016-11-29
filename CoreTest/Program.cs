@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using Excel;
 
 namespace CoreTest
 {
@@ -10,12 +9,25 @@ namespace CoreTest
 	{
 		public static void Main(string[] args)
 		{
-			using (var stream = new FileStream(@"..\Excel.Tests.4.5\Resources\Test_BigFormatted.xlsx", FileMode.Open))
-			{
-				IExcelDataReader reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+			Run().Wait();
+		}
 
-				reader.IsFirstRowAsColumnNames = firstRowNamesCheckBox.Checked;
-				var ds = reader.AsDataSet();
+
+		static async Task Run()
+		{
+			try
+			{
+				using (var stream = new FileStream(@"..\Excel.Tests.4.5\Resources\Test_BigFormatted.xlsx", FileMode.Open))
+				{
+					IExcelDataReader reader = await ExcelReaderFactory.CreateOpenXmlReader(stream);
+
+					reader.IsFirstRowAsColumnNames = true;
+					var ds = await reader.ReadAll();
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
 			}
 		}
 	}
